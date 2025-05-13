@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Security Dashboard - Query Mapping</title>
+    <style>
+        :root {
+            --primary-color: #0066cc;
+            --secondary-color: #f8f9fa;
+            --accent-color: #0056b3;
+            --text-color: #333;
+            --border-color: #ddd;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --light-gray: #f5f5f5;
+            --highlight-color: rgba(255, 255, 0, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--secondary-color);
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-content h1 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .dashboard-subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .time-filter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        select {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: white;
+        }
+
+        .print-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        /* Summary Section */
+        .summary-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            position: relative;
+        }
+
+        .summary-card.high {
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .summary-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+
+        .summary-card.high .summary-value {
+            color: var(--danger-color);
+        }
+
+        .summary-label {
+            font-size: 1em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .summary-trend {
+            font-size: 0.9em;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .summary-trend.positive {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+        }
+
+        .summary-trend.negative {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+        }
+
+        /* Tab Navigation */
+        .dashboard-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+
+        .tab-button {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button:hover {
+            color: var(--primary-color);
+        }
+
+        .tab-button.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section-header {
+            margin-bottom: 30px;
+        }
+
+        .section-header h2 {
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+
+        .section-header p {
+            color: #666;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .chart-container.wide {
+            grid-column: span 2;
+        }
+
+        .chart-container h3 {
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        .chart-description {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .chart-placeholder {
+            width: 100%;
+            height: 200px;
+            background-color: var(--light-gray);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Query Badge */
+        .query-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        /* Legend */
+        .legend {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .legend h2 {
+            margin-bottom: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .legend-badge {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-right: 10px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .legend-description {
+            flex: 1;
+        }
+
+        .legend-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+        .legend-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Tabs for switching between dashboard and documentation */
+        .main-tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .main-tab {
+            padding: 10px 20px;
+            background-color: var(--light-gray);
+            border: none;
+            border-radius: 4px 4px 0 0;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .main-tab.active {
+            background-color: white;
+            font-weight: bold;
+        }
+
+        .main-tab-content {
+            display: none;
+        }
+
+        .main-tab-content.active {
+            display: block;
+        }
+
+        /* Documentation styles */
+        .documentation {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .documentation h2 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .documentation h3 {
+            margin-top: 25px;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        .documentation pre {
+            background-color: var(--light-gray);
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin-bottom: 15px;
+        }
+
+        .documentation p {
+            margin-bottom: 15px;
+        }
+
+        .documentation ul {
+            margin-bottom: 15px;
+            padding-left: 20px;
+        }
+
+        .documentation li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <div class="header-content">
+                <h1>Executive Security Dashboard - Query Mapping</h1>
+                <p class="dashboard-subtitle">Visual mapping of Kusto queries to UI components</p>
+            </div>
+        </header>
+
+        <div class="main-tabs">
+            <button class="main-tab active" data-tab="dashboard">Dashboard Mapping</button>
+            <button class="main-tab" data-tab="documentation">Query Documentation</button>
+        </div>
+
+        <div class="main-tab-content active" id="dashboard-content">
+            <!-- Executive Summary Section -->
+            <div class="summary-section">
+                <div class="summary-card">
+                    <div class="query-badge">Query #1</div>
+                    <div class="summary-value">42</div>
+                    <div class="summary-label">Total Incidents</div>
+                    <div class="summary-trend positive">↓ 12% from previous period</div>
+                    <div class="query-badge" style="top: 40px;">Query #17</div>
+                </div>
+                <div class="summary-card high">
+                    <div class="query-badge">Query #2</div>
+                    <div class="summary-value">7</div>
+                    <div class="summary-label">High Severity Incidents</div>
+                    <div class="summary-trend negative">↑ 2 from previous period</div>
+                    <div class="query-badge" style="top: 40px;">Query #18</div>
+                </div>
+                <div class="summary-card">
+                    <div class="query-badge">Query #3</div>
+                    <div class="summary-value">2.5h</div>
+                    <div class="summary-label">Avg. Response Time</div>
+                    <div class="summary-trend positive">↓ 0.8h from previous period</div>
+                </div>
+                <div class="summary-card">
+                    <div class="query-badge">Query #4</div>
+                    <div class="summary-value">12.4h</div>
+                    <div class="summary-label">Avg. Resolution Time</div>
+                    <div class="summary-trend negative">↑ 1.2h from previous period</div>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="dashboard-tabs">
+                <button class="tab-button active" data-tab="overview">Overview</button>
+                <button class="tab-button" data-tab="incidents">Incident Details</button>
+                <button class="tab-button" data-tab="trends">Trends & Analysis</button>
+            </div>
+
+            <!-- Overview Tab -->
+            <div class="tab-content active" id="overview-tab">
+                <div class="section-header">
+                    <h2>Security Incident Overview</h2>
+                    <p>Key metrics and trends for the selected time period</p>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="chart-container wide">
+                        <div class="query-badge">Query #5</div>
+                        <h3>Security Incidents by Severity</h3>
+                        <p class="chart-description">Distribution of incidents by impact level</p>
+                        <div class="chart-placeholder">Bar Chart - Recharts BarChart Component</div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="query-badge">Query #6</div>
+                        <h3>Incident Status</h3>
+                        <p class="chart-description">Current state of all security incidents</p>
+                        <div class="chart-placeholder">Pie Chart - Recharts PieChart Component</div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="query-badge">Query #7</div>
+                        <h3>Incident Classification</h3>
+                        <p class="chart-description">Breakdown of incident types and causes</p>
+                        <div class="chart-placeholder">Pie Chart - Recharts PieChart Component</div>
+                    </div>
+                    
+                    <div class="chart-container wide">
+                        <div class="query-badge">Query #8</div>
+                        <h3>Weekly Security Alert Volume</h3>
+                        <p class="chart-description">Alert trends over time by detection source</p>
+                        <div class="chart-placeholder">Line Chart - Recharts LineChart Component</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Incidents Tab -->
+            <div class="tab-content" id="incidents-tab">
+                <div class="section-header">
+                    <h2>Incident Details</h2>
+                    <p>Detailed breakdown of security incidents</p>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="chart-container wide">
+                        <div class="query-badge">Query #9</div>
+                        <h3>Incident Response Time Metrics</h3>
+                        <p class="chart-description">Response time statistics (in hours)</p>
+                        <div class="chart-placeholder">Bar Chart - Recharts BarChart Component</div>
+                    </div>
+                    
+                    <div class="chart-container wide">
+                        <div class="query-badge">Query #10</div>
+                        <h3>Incident Resolution Time Metrics</h3>
+                        <p class="chart-description">Resolution time statistics (in hours)</p>
+                        <div class="chart-placeholder">Bar Chart - Recharts BarChart Component</div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="query-badge">Query #11</div>
+                        <h3>Alert Volume by Product</h3>
+                        <p class="chart-description">Top 5 alert sources</p>
+                        <div class="chart-placeholder">Horizontal Bar Chart - Recharts BarChart Component</div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="query-badge">Query #12</div>
+                        <h3>Alert Severity Distribution</h3>
+                        <p class="chart-description">Daily alert count by severity</p>
+                        <div class="chart-placeholder">Line Chart - Recharts LineChart Component</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trends Tab -->
+            <div class="tab-content" id="trends-tab">
+                <div class="section-header">
+                    <h2>Trends & Analysis</h2>
+                    <p>Security trends and pattern analysis</p>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="chart-container wide">
+                        <h3>Alert Severity Trends</h3>
+                        <p class="chart-description">Alert volume by severity over time</p>
+                        <div class="chart-placeholder">Line Chart - Similar to Query #12</div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="query-badge">Query #13</div>
+                        <h3>MITRE ATT&CK Tactics Coverage</h3>
+                        <p class="chart-description">Detection coverage across MITRE ATT&CK tactics</p>
+                        <div class="chart-placeholder">Radar Chart - Recharts RadarChart Component</div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="query-badge">Query #14</div>
+                        <h3>Top Attack Techniques</h3>
+                        <p class="chart-description">Most common attack techniques by product</p>
+                        <div class="chart-placeholder">Horizontal Bar Chart - Recharts BarChart Component</div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="query-badge">Query #15</div>
+                        <h3>Top Targeted Systems</h3>
+                        <p class="chart-description">Most frequently targeted systems</p>
+                        <div class="chart-placeholder">Horizontal Bar Chart - Recharts BarChart Component</div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="query-badge">Query #16</div>
+                        <h3>Email-based Attack Analysis</h3>
+                        <p class="chart-description">Common email subjects in attacks</p>
+                        <div class="chart-placeholder">Horizontal Bar Chart - Recharts BarChart Component</div>
+                    </div>
+                    
+                    <div class="chart-container wide">
+                        <h3>Risk Reduction Opportunities</h3>
+                        <p class="chart-description">Recommended security improvements</p>
+                        <div class="chart-placeholder">Static recommendations based on analysis</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="legend">
+                <h2>Query Legend</h2>
+                <div class="legend-item">
+                    <div class="legend-badge">Query #1</div>
+                    <div class="legend-description">Total Incidents Card - Count of all security incidents in the last 30 days</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-badge">Query #2</div>
+                    <div class="legend-description">High Severity Incidents Card - Count of high severity incidents in the last 30 days</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-badge">Query #3</div>
+                    <div class="legend-description">Average Response Time Card - Average time to triage incidents in hours</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-badge">Query #4</div>
+                    <div class="legend-description">Average Resolution Time Card - Average time to close incidents in hours</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-badge">Query #5</div>
+                    <div class="legend-description">Incidents by Severity Chart - Distribution of incidents by severity level</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-badge">Query #6</div>
+                    <div class="legend-description">Incident Status Chart - Distribution of incidents by current status</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-badge">Query #7</div>
+                    <div class="legend-description">Incident Classification Chart - Top 5 incident classifications</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-badge">Query #8</div>
+                    <div class="legend-description">Weekly Security Alert Volume Chart - Alert trends over time by product</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-badge">Query #9</div>
+                    <div class="legend-description">Incident Response Time Metrics Chart - Response time statistics</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-badge">Query #10</div>
+                    <div class="legend-description">Incident Resolution Time Metrics Chart - Resolution time statistics</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-badge">Query #11</div>
+                    <div class="legend-description">Alert Volume by Product Chart - Top 5 products by alert count</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-badge">Query #12</div>
+                    <div class="legend-description">Alert Severity Distribution Chart - Daily alert count by severity</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-badge">Query #13</div>
+                    <div class="legend-description">MITRE ATT&CK Tactics Coverage Chart - Detection coverage across tactics</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-badge">Query #14</div>
+                    <div class="legend-description">Top Attack Techniques Chart - Most common attack techniques by product</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-badge">Query #15</div>
+                    <div class="legend-description">Top Targeted Systems Chart - Most frequently targeted systems</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-badge">Query #16</div>
+                    <div class="legend-description">Email-based Attack Analysis Chart - Common email subjects in attacks</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-badge">Query #17</div>
+                    <div class="legend-description">Incident Trend Comparison - Percentage change in total incidents</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-badge">Query #18</div>
+                    <div class="legend-description">High Severity Incident Trend - Absolute change in high severity incidents</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-tab-content" id="documentation-content">
+            <div class="documentation">
+                <h2>Query Documentation</h2>
+                <p>For detailed documentation of each query, please refer to the <a href="query_documentation.md" target="_blank">query_documentation.md</a> file.</p>
+                
+                <h3>Implementation Notes</h3>
+                <p>The dashboard should be implemented using:</p>
+                <ul>
+                    <li><strong>Frontend Framework:</strong> React.js</li>
+                    <li><strong>Chart Library:</strong> Recharts (<a href="https://recharts.org/en-US/examples" target="_blank">https://recharts.org/en-US/examples</a>)</li>
+                    <li><strong>Data Source:</strong> Azure Log Analytics (Kusto queries)</li>
+                </ul>
+                
+                <h3>Data Flow</h3>
+                <p>The data flow for the dashboard implementation should follow these steps:</p>
+                <ol>
+                    <li>Execute Kusto queries against Azure Log Analytics</li>
+                    <li>Transform query results into the format expected by Recharts</li>
+                    <li>Render charts and metrics using React components</li>
+                    <li>Implement time range filtering to update all queries</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Dashboard tabs
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all buttons and contents
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    // Add active class to clicked button and corresponding content
+                    button.classList.add('active');
+                    const tabId = button.getAttribute('data-tab');
+                    const targetTab = document.getElementById(`${tabId}-tab`);
+                    if (targetTab) {
+                        targetTab.classList.add('active');
+                    }
+                });
+            });
+
+            // Main tabs (Dashboard vs Documentation)
+            const mainTabs = document.querySelectorAll('.main-tab');
+            const mainTabContents = document.querySelectorAll('.main-tab-content');
+            
+            mainTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs and contents
+                    mainTabs.forEach(t => t.classList.remove('active'));
+                    mainTabContents.forEach(content => content.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab');
+                    const targetContent = document.getElementById(`${tabId}-content`);
+                    if (targetContent) {
+                        targetContent.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

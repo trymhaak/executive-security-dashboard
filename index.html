@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Security Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <div class="header-content">
+                <h1>Executive Security Dashboard</h1>
+                <p class="dashboard-subtitle">Security posture at a glance</p>
+            </div>
+            <div class="header-controls">
+                <div class="time-filter">
+                    <label for="timeRange">Time Period:</label>
+                    <select id="timeRange">
+                        <option value="7">Last 7 Days</option>
+                        <option value="30" selected>Last 30 Days</option>
+                        <option value="90">Last Quarter</option>
+                        <option value="180">Last 6 Months</option>
+                    </select>
+                </div>
+                <button id="printButton" class="print-button">
+                    <span class="print-icon">🖨️</span>
+                    Print Report
+                </button>
+            </div>
+        </header>
+
+        <!-- Executive Summary Section -->
+        <div class="summary-section">
+            <div class="summary-card">
+                <div class="summary-value">42</div>
+                <div class="summary-label">Total Incidents</div>
+                <div class="summary-trend positive">↓ 12% from previous period</div>
+            </div>
+            <div class="summary-card high">
+                <div class="summary-value">7</div>
+                <div class="summary-label">High Severity Incidents</div>
+                <div class="summary-trend negative">↑ 2 from previous period</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-value">2.5h</div>
+                <div class="summary-label">Avg. Response Time</div>
+                <div class="summary-trend positive">↓ 0.8h from previous period</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-value">12.4h</div>
+                <div class="summary-label">Avg. Resolution Time</div>
+                <div class="summary-trend negative">↑ 1.2h from previous period</div>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="dashboard-tabs">
+            <button class="tab-button active" data-tab="overview">Overview</button>
+            <button class="tab-button" data-tab="incidents">Incident Details</button>
+            <button class="tab-button" data-tab="trends">Trends & Analysis</button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div class="tab-content active" id="overview-tab">
+            <div class="section-header">
+                <h2>Security Incident Overview</h2>
+                <p>Key metrics and trends for the selected time period</p>
+            </div>
+            
+            <div class="dashboard-grid">
+                <div class="chart-container wide">
+                    <h3>Security Incidents by Severity</h3>
+                    <p class="chart-description">Distribution of incidents by impact level</p>
+                    <canvas id="severityChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>Incident Status</h3>
+                    <p class="chart-description">Current state of all security incidents</p>
+                    <canvas id="statusChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>Incident Classification</h3>
+                    <p class="chart-description">Breakdown of incident types and causes</p>
+                    <canvas id="classificationChart"></canvas>
+                </div>
+                
+                <div class="chart-container wide">
+                    <h3>Weekly Security Alert Volume</h3>
+                    <p class="chart-description">Alert trends over time by detection source</p>
+                    <canvas id="weeklyAlertVolumeChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Incidents Tab -->
+        <div class="tab-content" id="incidents-tab">
+            <div class="section-header">
+                <h2>Incident Details</h2>
+                <p>Detailed breakdown of security incidents</p>
+            </div>
+            
+            <div class="dashboard-grid">
+                <div class="chart-container wide">
+                    <h3>Incident Response Time Metrics</h3>
+                    <p class="chart-description">Response time statistics (in hours)</p>
+                    <canvas id="responseTimeChart"></canvas>
+                </div>
+                
+                <div class="chart-container wide">
+                    <h3>Incident Resolution Time Metrics</h3>
+                    <p class="chart-description">Resolution time statistics (in hours)</p>
+                    <canvas id="resolutionTimeChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>Alert Volume by Product</h3>
+                    <p class="chart-description">Top 5 alert sources</p>
+                    <canvas id="alertVolumeByProductChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>Alert Severity Distribution</h3>
+                    <p class="chart-description">Daily alert count by severity</p>
+                    <canvas id="alertSeverityDistributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trends Tab -->
+        <div class="tab-content" id="trends-tab">
+            <div class="section-header">
+                <h2>Trends & Analysis</h2>
+                <p>Security trends and pattern analysis</p>
+            </div>
+            
+            <div class="dashboard-grid">
+                <div class="chart-container wide">
+                    <h3>Alert Severity Trends</h3>
+                    <p class="chart-description">Alert volume by severity over time</p>
+                    <canvas id="alertSeverityTrendsChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>MITRE ATT&CK Tactics Coverage</h3>
+                    <p class="chart-description">Detection coverage across MITRE ATT&CK tactics</p>
+                    <canvas id="tacticsCoverageChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>Top Attack Techniques</h3>
+                    <p class="chart-description">Most common attack techniques by product</p>
+                    <canvas id="topAttackTechniquesChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>Top Targeted Systems</h3>
+                    <p class="chart-description">Most frequently targeted systems</p>
+                    <canvas id="topTargetedSystemsChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>Email-based Attack Analysis</h3>
+                    <p class="chart-description">Common email subjects in attacks</p>
+                    <canvas id="emailAttackAnalysisChart"></canvas>
+                </div>
+                
+                <div class="chart-container wide">
+                    <h3>Risk Reduction Opportunities</h3>
+                    <p class="chart-description">Recommended security improvements</p>
+                    <div id="recommendations-container">
+                        <!-- Recommendations will be added dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
