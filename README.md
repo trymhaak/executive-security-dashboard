@@ -60,19 +60,18 @@ For the production implementation:
 4. Connect to Azure Log Analytics to execute the queries
 5. Add time range filtering and error handling
 
-## Easy Access Options
+## Sharing the Documentation
 
-You can access and share this reference with your team in several ways:
+This project is hosted on GitHub Pages for easy sharing:
 
-1. **GitHub Pages (Recommended)**:
-   - The query mapping is published at: https://trymhaak.github.io/executive-security-dashboard-pages/query_mapping.html
-   - The dashboard demo is at: https://trymhaak.github.io/executive-security-dashboard-pages/
+- Simply share the links from the "Live Demo Links" section at the top of this README
+- No local setup or server required for viewers
 
-2. **Netlify Deployment**:
-   - Alternatively, use the Netlify deployment at: https://trymhaak-exec-security-dashboard.windsurf.build/
-
-3. **PDF Export**:
-   - For offline sharing, export the query mapping as a PDF from any of the above URLs
+For offline reference, you can export the pages as PDFs:
+1. Open any of the GitHub Pages links in Chrome
+2. Press Ctrl+P (or Cmd+P on Mac)
+3. Change destination to "Save as PDF"
+4. Click Save
 
 ## Project Structure
 
