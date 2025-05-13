@@ -2,6 +2,12 @@
 
 A visual reference implementation of a security metrics dashboard with clear mapping between Kusto queries and UI components.
 
+## Live Demo Links
+
+- **Dashboard**: [View Live Demo](https://trymhaak.github.io/executive-security-dashboard-pages/)
+- **Query Mapping**: [View Query Mapping](https://trymhaak.github.io/executive-security-dashboard-pages/query_mapping.html)
+- **Query Documentation**: [View Query Documentation](https://trymhaak.github.io/executive-security-dashboard-pages/query_documentation.md)
+
 ## Project Overview
 
 This project provides a visual reference for implementing an Executive Security Dashboard that displays security metrics based on Kusto queries. It consists of:
