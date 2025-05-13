@@ -1,71 +1,81 @@
 # Executive Security Dashboard
 
-This project contains a simplified implementation of an Executive Security Dashboard for security metrics visualization, along with documentation for implementing the production version.
+A visual reference implementation of a security metrics dashboard with clear mapping between Kusto queries and UI components.
 
-## Project Components
+## Project Overview
 
-### Dashboard Implementation
-- `index.html` - The main dashboard HTML structure
-- `styles.css` - CSS styling for the dashboard
-- `script.js` - JavaScript code for dashboard functionality
+This project provides a visual reference for implementing an Executive Security Dashboard that displays security metrics based on Kusto queries. It consists of:
 
-### Documentation
-- `query_documentation.md` - Detailed documentation of all Kusto queries used in the dashboard
-- `query_mapping.html` - Visual mapping of queries to UI components
+1. **Dashboard Demo** (index.html) - A working prototype with dummy data
+2. **Query Mapping** (query_mapping.html) - Visual reference showing which query powers each UI component
+3. **Query Documentation** (query_documentation.md) - Detailed documentation of all Kusto queries
 
-## How to Use
+## How the Query Mapping Works
 
-### Running the Dashboard
-1. Start a local server in the project directory:
+The `query_mapping.html` file provides a visual reference that shows:
+
+1. **Numbered Query Badges**: Each UI component has a numbered badge (e.g., "Query #1") that corresponds to a specific Kusto query in the `query_documentation.md` file.
+
+2. **Dashboard Layout**: The visualization shows the exact layout of the dashboard with all components in their proper positions.
+
+3. **Chart Types**: Each chart placeholder indicates which Recharts component should be used for implementation.
+
+## Using the Query Mapping for Implementation
+
+When implementing the production version of the dashboard:
+
+1. **Identify Components**: Navigate through the query mapping visualization to see all the components that need to be implemented.
+
+2. **Find Corresponding Queries**: For each component, note the query number on its badge.
+
+3. **Look Up Query Details**: Go to the `query_documentation.md` file and find the section for that query number.
+
+4. **Implement the Component**: Use the specified Recharts component and the Kusto query to implement the UI component.
+
+## Example Workflow
+
+1. In the query mapping, you see a chart with "Query #5" badge labeled "Incidents by Severity"
+2. In the query documentation, you find Query #5:
+   ```kusto
+   SecurityIncident
+   | where TimeGenerated > ago(30d)
+   | summarize count() by Severity
+   | order by count_ desc
    ```
-   python3 -m http.server 7777
-   ```
-2. Open your browser and navigate to:
-   - Dashboard: http://localhost:7777/
-   - Query Mapping: http://localhost:7777/query_mapping.html
+3. You implement this using the Recharts PieChart component as specified in the documentation
 
-### Documentation
-- The `query_documentation.md` file contains detailed explanations of all Kusto queries used in the dashboard, including:
-  - Query syntax
-  - Explanation of what each query does
-  - Mapping to Recharts components for visualization
-
-- The `query_mapping.html` file provides a visual reference showing which query powers each UI component.
-
-## Presentation Options
-
-### Option 1: Deploy to Netlify
-You can deploy this dashboard to Netlify for easy sharing:
-1. Create a free Netlify account
-2. Drag and drop the entire folder to Netlify's upload area
-3. Share the generated URL with your team
-
-### Option 2: Export as PDF
-You can export the query mapping as a PDF:
-1. Open the query_mapping.html in Chrome
-2. Press Ctrl+P (or Cmd+P on Mac)
-3. Change destination to "Save as PDF"
-4. Click Save
-
-### Option 3: GitHub Repository
-Upload the project to a GitHub repository:
-1. Create a new repository
-2. Push all files to the repository
-3. Enable GitHub Pages in the repository settings
-4. Share the GitHub Pages URL with your team
-
-## Implementation Notes
-
-The dashboard should be implemented using:
-- Frontend Framework: React.js
-- Chart Library: Recharts (https://recharts.org/en-US/examples)
-- Data Source: Azure Log Analytics (Kusto queries)
-
-## Next Steps
+## Implementation Guide
 
 For the production implementation:
-1. Set up a React.js project
-2. Install Recharts as a dependency
-3. Create a data service to execute Kusto queries
-4. Implement the UI components using Recharts
+
+1. Use React.js with Recharts for the frontend
+2. Implement each UI component shown in the query mapping
+3. Use the corresponding Kusto query from the documentation
+4. Connect to Azure Log Analytics to execute the queries
 5. Add time range filtering and error handling
+
+## Easy Access Options
+
+You can access and share this reference with your team in several ways:
+
+1. **GitHub Pages (Recommended)**:
+   - The query mapping is published at: https://trymhaak.github.io/executive-security-dashboard-pages/query_mapping.html
+   - The dashboard demo is at: https://trymhaak.github.io/executive-security-dashboard-pages/
+
+2. **Netlify Deployment**:
+   - Alternatively, use the Netlify deployment at: https://trymhaak-exec-security-dashboard.windsurf.build/
+
+3. **PDF Export**:
+   - For offline sharing, export the query mapping as a PDF from any of the above URLs
+
+## Project Structure
+
+```
+executive-security-dashboard/
+├── index.html              # Dashboard demo with dummy data
+├── query_mapping.html      # Visual mapping of queries to UI components
+├── query_documentation.md  # Detailed Kusto query documentation
+├── styles.css              # CSS styling
+├── script.js               # JavaScript for the demo
+└── README.md               # This file
+```
